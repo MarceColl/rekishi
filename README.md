@@ -1,13 +1,23 @@
-# Rekishi (歴史)
+<div class="title-block" style="text-align: center;" align="center">
 
-Rekishi is an experimental integrated CVS and development environment for Common Lisp.
+# Rekishi
+<div style="font-size: 38px">
+歴
+</div>
+<div style="font-size: 38px">
+史
+</div>
+
+> Rekishi is an experimental integrated code versioning system and development environment for Common Lisp.
+
+</div>
 
 It keeps track of all modifications you make to your functions and macros and creates a version graph
 with all your past editions. You can traverse this graph, inspect it, and rebind the symbol
 (or any other symbol) to a previous version.
 
 This software is in absolute ALPHA proof-of-concept quality, do not use for anything serious, but,
-if you want to collaborate on this let me know :)
+if you want to collaborate on this let me know, particularly looking for someone with emacs plugin experience :)
 
 ## Roadmap
 
@@ -80,12 +90,20 @@ We get another entry if we run the same query as before
 sqlite> SELECT * FROM objects WHERE hash = (SELECT object FROM bindings WHERE binding = 'ADD-1' AND package = '...');
 
 | hash       | definiton | parent    | mtime     |
-| a1341fb0...|(A) (+ A 2)|c0a4b4f0...|1709884073 |
+| a1341fb0...|(A) (+ A 1)|c0a4b4f0...|1709884073 |
 ```
 
 Now the binding `ADD-1` points to the new definition, and we have a reference to the parent.
 
 We can inspect the history of the function with `(get-history 'add-1)`
+
+```
+HISTORY: ADD-1 (CL-USER)
+
+ *    c0a4b4f0 (A) (+ A 2)
+ |
+ O <  a1341fb0 (A) (+ A 1)
+```
 
 Let's say we liked our previous definition better, we can place our cursor on top of the symbol in the buffer
 and run `(rekishi-prev)`. This does several things, automatically changes the definition in your buffer so you now see 
@@ -98,6 +116,14 @@ SYMBOL: ADD-1                        2 versions
   (+ a 2))
 ```
 
+```
+HISTORY: ADD-1 (CL-USER)
+
+ O <  c0a4b4f0 (A) (+ A 2)
+ |
+ *    a1341fb0 (A) (+ A 1)
+```
+
 It also rebinds the function locally to the old one
 
 ```lisp
@@ -107,6 +133,19 @@ It also rebinds the function locally to the old one
 ```
 
 And it sets the binding in the `bindings` table to point to the old one.
+
+Since we are in the parent now, if we modify the function to a new thing, it will create a new history entry branching
+from the parent.
+
+```lisp
+HISTORY: ADD-1 (CL-USER)
+
+ *     c0a4b4f0 (A) (+ A 2)
+ |\
+ * |   a1341fb0 (A) (+ A 1)
+   |
+   O < whatever (A) (+ A 3)
+```
 
 Now let's add an existing symbol to the buffer. We can use the `(rekishi-bring-symbol)` function, that shows us a list
 of symbols to bring in the emacs completion framework.
@@ -127,4 +166,5 @@ SYMBOL: SETUP-CONNECTION (DATABASE)   14 versions
 ```
 
 As you can see you basically bring what you need in the current buffer and operate on it at the same time, you can return symbols,
-reorder them and even bring the same symbol at a different version.
+reorder them and even bring the same symbol at a different version. You can have your working environment locally and hide and
+bring whatever you need. While keeping your whole history available.
