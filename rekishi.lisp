@@ -115,7 +115,7 @@ JOIN objects AS o ON (o.hash = b.object)"))
   (let ((s-expr-to-octets (string-to-octets (format nil "~a ~a" args s-expr))))
     (byte-array-to-hex-string (digest-sequence :sha512 s-expr-to-octets))))
 
-(defun short-hash (hash)
+(defun/r short-hash (hash)
   (subseq hash 0 10))
 
 (defun/r get-binding-object-hash (binding)
