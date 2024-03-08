@@ -1,6 +1,8 @@
 (asdf:defsystem #:rekishi
   :depends-on (:bedrock :alexandria :ironclad :babel :cl-dbi)
-  :components ((:file "rekishi"))
+  :components ((:file "rekishi")
+	       (:file "dal")
+	       (:file "defun" :depends-on ("rekishi" "dal")))
   :in-order-to ((test-op (test-op :chobun/test))))
 
 (asdf:defsystem #:rekishi/test
